@@ -1,0 +1,59 @@
+# Provider.tf
+terraform {
+  required_providers {
+    aws = { source = "hashicorp/aws" }
+    azurerm = { source = "hashicorp/azurerm" }
+    google = { source = "hashicorp/google" }
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+provider "azurerm" {
+  features {}
+}
+
+provider "google" {
+  project = "your-gcp-project-id"
+  region  = "us-central1"
+}
+
+
+# variable.tf
+variable "aws_region" {
+  default = "us-east-1"
+}
+
+variable "gcp_project" {
+  default = "your-project-id"
+}
+
+# main.tf
+# Example - Create S3 bucket, Azure storage account, and GCP bucket
+resource "aws_s3_bucket" "devops_bucket" {
+  bucket = "multi-cloud-devops-bucket"
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = "multi-cloud-rg"
+  location = "East US"
+}
+
+resource "google_storage_bucket" "gcp_bucket" {
+  name     = "multi-cloud-devops-bucket"
+  location = "US"
+}
+
+# Outputs.tf
+output "aws_bucket_name" {
+  value = aws_s3_bucket.devops_bucket.id
+}
+
+# Backend.tf
+terraform {
+  backend "local" {
+    path = "./terraform.tfstate"
+  }
+}
